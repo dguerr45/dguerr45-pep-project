@@ -2,6 +2,12 @@ package Controller;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import Model.Account;
+import Model.Message;
+import Service.AccountService;
+import Service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -9,6 +15,14 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    AccountService accountService;
+    MessageService messageService;
+
+    public SocialMediaController(){
+        this.accountService = new AccountService();
+        this.messageService = new MessageService();
+    }
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -16,18 +30,51 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        //app.get("example-endpoint", this::exampleHandler);
+        app.post("/register", this::postUserHandler);
 
         return app;
     }
 
     /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * Handler to post a new User Account.
+     * Jackson ObjectMapper converts JSON from POST request to Account object.
+     * If addedAccount is null, then posting User Account is unsuccessful and API will return 400 message.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    private void postUserHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account addedAccount = null;
+        
+        /**
+         * Going through conditions to create new Account:
+         * - username is not empty
+         * - password is at least 4 characters long
+         * - username doesn't already exist
+         */
+        if( !account.getUsername().isEmpty() && account.getPassword().length() >= 4 && 
+            accountService.getAccountByName(account.getUsername()) == null){
+            addedAccount = accountService.addAccount(account);
+        }
+        
+
+        if(addedAccount != null){
+            ctx.status(200).json( mapper.writeValueAsString(addedAccount) );
+        } else {
+            ctx.status(400);
+        }
     }
+
+    // /**
+    //  * This is an example handler for an example endpoint.
+    //  * @param context The Javalin Context object manages information about both the HTTP request and response.
+    //  */
+    // private void exampleHandler(Context context) {
+    //     context.json("sample text");
+    // }
 
 
 }
