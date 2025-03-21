@@ -1,12 +1,11 @@
 package DAO;
 
+import java.sql.*;
+
 import Model.Account;
 import Util.ConnectionUtil;
 
-import java.sql.*;
-
 public class AccountDAO{
-
     /**
      * Will communicate with Database and insert a new entry into Account table.
      * @param account an Account object attempting insertion into Account table
@@ -23,8 +22,9 @@ public class AccountDAO{
 
             pStatement.executeUpdate();
             ResultSet rs = pStatement.getGeneratedKeys();
+
             if(rs.next()){
-                account.setAccount_id((int) rs.getLong(1));
+                account.setAccount_id((int) rs.getInt("account_id"));
                 return account;
             }
 
@@ -50,10 +50,33 @@ public class AccountDAO{
             ResultSet rs = pStatement.executeQuery();
 
             if(rs.next()){
-                Account temp = new Account(rs.getInt("account_id"), rs.getString("username"),
-                                            rs.getString("password"));
+                Account temp = new Account(rs.getInt("account_id"), 
+                                           rs.getString("username"),
+                                           rs.getString("password"));
                 return temp;
             }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Account getAccountById(int id){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "SELECT * FROM Account WHERE account_id = ?";
+            PreparedStatement pStatement = connection.prepareStatement(sql);
+            pStatement.setInt(1, id);
+
+            ResultSet rs = pStatement.executeQuery();
+
+            if(rs.next()){
+                Account temp = new Account(rs.getInt("account_id"),
+                                       rs.getString("username"),
+                                       rs.getString("password"));
+                return temp;
+            }
+
         } catch(SQLException e){
             System.out.println(e.getMessage());
         }
