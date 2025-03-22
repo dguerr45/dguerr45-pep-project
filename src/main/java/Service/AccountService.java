@@ -40,7 +40,7 @@ public class AccountService {
 
     /**
      * Will retrieve an account from database searching by id.
-     * @param id an int representing the account's id
+     * @param id an int representing the account's account_id
      * @return will return the account associated with the id if it exists,
      *         otherwise null
      */

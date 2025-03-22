@@ -4,6 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.*;
+
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
@@ -34,6 +36,8 @@ public class SocialMediaController {
         app.post("/register", this::postUserHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageHandler);
 
         return app;
     }
@@ -131,6 +135,32 @@ public class SocialMediaController {
         } else {
             ctx.status(400);
         }
+    }
+
+    /**
+     * Handler to gather all messages from Database.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     */
+    private void getAllMessagesHandler(Context ctx){
+        List<Message> messages = messageService.getAllMessages();
+        ctx.status(200).json(messages);
+    }
+
+    /**
+     * Handler to get a single message searching by given message_id
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     */
+    private void getMessageHandler(Context ctx){
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageById(message_id);
+        if(message != null){
+            ctx.status(200).json(message);
+        } else {
+            ctx.status(200);
+        }
+        
     }
 
     // /**
