@@ -38,6 +38,7 @@ public class SocialMediaController {
         app.post("/messages", this::postMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
 
         return app;
     }
@@ -138,7 +139,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler to gather all messages from Database.
+     * Handler to gather all messages from Message table
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.post method.
      */
@@ -148,7 +149,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler to get a single message searching by given message_id
+     * Handler to retrieve a single message from Message table searching by given message_id
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.post method.
      */
@@ -160,6 +161,25 @@ public class SocialMediaController {
         } else {
             ctx.status(200);
         }
+        
+    }
+
+    /**
+     * Handler to delete message in Message table searching by id
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     */
+    private void deleteMessageHandler(Context ctx){
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageById(message_id);
+
+        // if message existed, delete and return message
+        if(message != null){
+            messageService.deleteMessageById(message_id);
+            ctx.json(message);
+        }
+        // no matter the outcome, status is 200
+        ctx.status(200);
         
     }
 

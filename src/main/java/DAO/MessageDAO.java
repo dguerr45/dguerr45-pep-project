@@ -71,7 +71,7 @@ public class MessageDAO {
      */
     public Message getMessageById(int message_id){
         Connection connection = ConnectionUtil.getConnection();
-        Message tempMessage = new Message();
+        Message tempMessage = null;
 
         try{
             String sql = "SELECT * FROM Message WHERE message_id = ?";
@@ -90,6 +90,26 @@ public class MessageDAO {
         } catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return tempMessage;
+    }
+
+    /**
+     * Will retrieve message from Message table searching by message_id, then delete it from
+     * the database
+     * @param message_id an int representing the message's message_id
+     */
+    public void deleteMessageById(int message_id){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try{
+            String sql = "DELETE FROM Message WHERE message_id = ?";
+            PreparedStatement pStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pStatement.setInt(1, message_id);
+
+            pStatement.executeUpdate();
+
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -41,9 +41,19 @@ public class MessageService {
     /**
      * Will return single message from Database searching by message_id
      * @param message_id an int representing message's message_id
-     * @return will return the message associated with message_id, empty message otherwise
+     * @return the message associated with message_id, empty message otherwise
      */
     public Message getMessageById(int message_id){
         return this.messageDAO.getMessageById(message_id);
+    }
+
+    /**
+     * /**
+     * Will retrieve message from Message table searching by message_id, then delete it from
+     * the database
+     * @param message_id an int representing message's message_id
+     */
+    public void deleteMessageById(int message_id){
+        this.messageDAO.deleteMessageById(message_id);
     }
 }
