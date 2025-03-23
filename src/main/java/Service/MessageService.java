@@ -48,7 +48,6 @@ public class MessageService {
     }
 
     /**
-     * /**
      * Will retrieve message from Message table searching by message_id, then delete it from
      * the database
      * @param message_id an int representing message's message_id
@@ -64,5 +63,14 @@ public class MessageService {
      */
     public void updateMessageById(int message_id, String newMessageText){
         this.messageDAO.updateMessageById(message_id, newMessageText);
+    }
+
+    /**
+     * Will retrieve all messages posted by a particular user from Message table
+     * @param account_id an int representing the user's account_id to search by
+     * @return all message entries from Message table posted by searched user
+     */
+    public List<Message> getAllMessagesByUser(int account_id){
+        return this.messageDAO.getAllMessagesByUser(account_id);
     }
 }

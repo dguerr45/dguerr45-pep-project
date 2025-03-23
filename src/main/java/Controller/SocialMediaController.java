@@ -40,6 +40,7 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
         app.patch("/messages/{message_id}", this ::updateMessageHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessageByUserHandler);
 
         return app;
     }
@@ -211,6 +212,18 @@ public class SocialMediaController {
         } else {
             ctx.status(400);
         }
+    }
+
+    /**
+     * Handler to retrieve all messages posted by a particular user
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     */
+    private void getAllMessageByUserHandler(Context ctx){
+        int account_id = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> userMessages = messageService.getAllMessagesByUser(account_id);
+        ctx.status(200).json(userMessages);
+
     }
 
     // /**

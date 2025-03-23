@@ -133,4 +133,36 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * Will retrieve all messages posted by a particular user
+     * @param account_id int representing the user's account_id to search by
+     * @return an ArrayList containing all messages posted by a user, or an empty ArrayList if none
+     * exist
+     */
+    public List<Message> getAllMessagesByUser(int account_id){
+        Connection connection = ConnectionUtil.getConnection();
+        ArrayList<Message> userMessages = new ArrayList<>();
+
+        try{
+            String sql = "SELECT * FROM Message WHERE posted_by = ?";
+            PreparedStatement pStatement = connection.prepareStatement(sql);
+            pStatement.setInt(1, account_id);
+
+            ResultSet rs = pStatement.executeQuery();
+
+            while(rs.next()){
+                Message temp = new Message(rs.getInt("message_id"),
+                                           rs.getInt("posted_by"),
+                                           rs.getString("message_text"),
+                                           rs.getLong("time_posted_epoch"));
+                userMessages.add(temp);
+            }
+
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+
+        return userMessages;
+    }
 }
