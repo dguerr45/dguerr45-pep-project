@@ -56,4 +56,13 @@ public class MessageService {
     public void deleteMessageById(int message_id){
         this.messageDAO.deleteMessageById(message_id);
     }
+
+    /**
+     * Will update an existing message in Message table, searching by message_id
+     * @param message_id an int representing message's message_id
+     * @param newMessageText the new message that should be read in message_text
+     */
+    public void updateMessageById(int message_id, String newMessageText){
+        this.messageDAO.updateMessageById(message_id, newMessageText);
+    }
 }

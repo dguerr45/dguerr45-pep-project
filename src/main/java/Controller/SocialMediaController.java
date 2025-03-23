@@ -39,6 +39,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.patch("/messages/{message_id}", this ::updateMessageHandler);
 
         return app;
     }
@@ -125,7 +126,7 @@ public class SocialMediaController {
          * - posted_by refers to an existing user
          */
         if( !newMessage.getMessage_text().isEmpty() &&
-            newMessage.getMessage_text().length() < 255 &&
+            newMessage.getMessage_text().length() <= 255 &&
             accountService.getAccountById(newMessage.getPosted_by()) != null)
         {
             addedMessage = messageService.addMessage(newMessage);
@@ -180,7 +181,36 @@ public class SocialMediaController {
         }
         // no matter the outcome, status is 200
         ctx.status(200);
+    }
+
+    /**
+     * Handler to update an existing message in Message table if it exists
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.post method.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
+    private void updateMessageHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message newMessage = mapper.readValue(ctx.body(), Message.class);
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         
+        /**
+         * Going through conditions in order to update message:
+         * - message in Message table should already exist
+         * - new message_text to be inserted is not blank
+         * - new message_text to be inserted is <=255 characters
+         */
+        if(messageService.getMessageById(message_id) != null &&
+           !newMessage.getMessage_text().isEmpty() &&
+           newMessage.getMessage_text().length() <= 255 )
+        {
+            messageService.updateMessageById(message_id, newMessage.getMessage_text());
+            newMessage = messageService.getMessageById(message_id);
+            ctx.status(200).json(newMessage);
+
+        } else {
+            ctx.status(400);
+        }
     }
 
     // /**

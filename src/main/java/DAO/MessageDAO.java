@@ -103,12 +103,33 @@ public class MessageDAO {
 
         try{
             String sql = "DELETE FROM Message WHERE message_id = ?";
-            PreparedStatement pStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = connection.prepareStatement(sql);
             pStatement.setInt(1, message_id);
 
             pStatement.executeUpdate();
 
         } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Will update message_text in message from Message table
+     * @param message_id int representing message's message_id
+     * @param newMessageText the new message that should be read in message_text
+     */
+    public void updateMessageById(int message_id, String newMessageText){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try{
+            String sql = "UPDATE Message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement pStatement = connection.prepareStatement(sql);
+            pStatement.setString(1, newMessageText);
+            pStatement.setInt(2, message_id);
+
+            pStatement.executeUpdate();
+
+        } catch (SQLException e){
             System.out.println(e.getMessage());
         }
     }

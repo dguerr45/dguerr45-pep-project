@@ -23,7 +23,7 @@ public class AccountDAO{
             ResultSet rs = pStatement.getGeneratedKeys();
 
             if(rs.next()){
-                account.setAccount_id((int) rs.getInt("account_id"));
+                account.setAccount_id(rs.getInt("account_id"));
                 return account;
             }
 
@@ -50,8 +50,8 @@ public class AccountDAO{
 
             if(rs.next()){
                 Account tempAccount = new Account(rs.getInt("account_id"), 
-                                           rs.getString("username"),
-                                           rs.getString("password"));
+                                                  rs.getString("username"),
+                                                  rs.getString("password"));
                 return tempAccount;
             }
         } catch(SQLException e){
@@ -76,8 +76,8 @@ public class AccountDAO{
 
             if(rs.next()){
                 Account tempAccount = new Account(rs.getInt("account_id"),
-                                       rs.getString("username"),
-                                       rs.getString("password"));
+                                                  rs.getString("username"),
+                                                  rs.getString("password"));
                 return tempAccount;
             }
 
